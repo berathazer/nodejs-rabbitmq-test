@@ -1,4 +1,5 @@
 import amqp from "amqplib";
+import data from "./data.json" assert { type: "json" };
 
 const message = {
 	description: "Test mesajı.",
@@ -14,11 +15,19 @@ async function connect_rabbitMQ() {
 
 		await channel.assertQueue(queue);
 
-		setInterval(() => {
-			message.description = new Date().getTime();
+		data.forEach((item) => {
+			message.description = item.id;
 			channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
-			console.log("Gönderilen mesaj:", message);
-		}, 10);
+			console.log("Gönderilen mesaj:", item.id);
+		});
+		// setInterval Kısmı
+		/* setInterval(() => {
+				message.description = new Date().getTime();
+				channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
+				console.log("Gönderilen mesaj:", message);
+			}, 10);
+		*/
+		// setInterval Kısmı
 	} catch (error) {
 		console.log("Error:", error);
 	}
